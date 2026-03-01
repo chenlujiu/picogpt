@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/picogpt.iml" filepath="$PROJECT_DIR$/.idea/picogpt.iml" />
+      <module fileurl="file://$USER_HOME$/PycharmProjects/picogpt_note/.idea/picogpt_note.iml" filepath="$USER_HOME$/PycharmProjects/picogpt_note/.idea/picogpt_note.iml" />
     </modules>
   </component>
 </project>
