@@ -108,8 +108,17 @@ class HuggingFaceTokenizer:
         return self.tokenizer.token_to_id(text)
 
     def get_bos_token_id(self):
-        bos = self.encode_special("<|bos|>")
-        return bos
+        # try common BOS token names across different tokenizers
+        for name in ["<|bos|>", "<|begin_of_text|>", "<s>"]:
+            bos = self.encode_special(name)
+            if bos is not None:
+                return bos
+        # fallback: use EOS token as pad (e.g. Qwen3 has no BOS)
+        for name in ["<|endoftext|>", "</s>"]:
+            eos = self.encode_special(name)
+            if eos is not None:
+                return eos
+        return 0
 
     def encode(self, text, *args, **kwargs):
         if isinstance(text, str):
