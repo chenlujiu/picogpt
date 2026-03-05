@@ -17,3 +17,10 @@ import wandb
 import torch
 import torch.distributed as dist
 from contextlib import nullcontext
+
+from tasks.common import TaskMixture
+from tasks.arc import ARC
+from tasks.gsm8k import GSM8K
+from tasks.smoltalk import SmolTalk
+from tasks.customjson import CustomJSON
+from tasks.spellingbee import SimpleSpelling, SpellingBee

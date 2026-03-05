@@ -175,14 +175,11 @@ def get_muon_momentum(it):
 # Loop state (variables updaated by the training loop)
 if not resuming:
     step = 0
-    min_val_bpb = float("inf")
     smooth_train_loss = 0 # EMA of training loss
     total_training_time = 0 # total wall-clock time of training
 else:
     step = meta_data["step"]
     loop_state = meta_data["loop_state"]
-    val_bpb = meta_data["val_bpb"]
-    min_val_bpb = loop_state["min_val_bpb"]
     smooth_train_loss = loop_state["smooth_train_loss"]
     total_training_time = loop_state["total_training_time"]
 
@@ -238,14 +235,12 @@ while True:
             [opt.state_dict() for opt in optimizers], # optimizer states
             { # metadata saved as json
                 "step": step,
-                "val_bpb": val_bpb, # loss at last step
                 "model_config": model_config_kwargs,
                 "user_config": user_config, # inputs to the training script
                 "device_batch_size": device_batch_size,
                 "max_seq_len": max_seq_len,
                 "dataloader_state_dict": dataloader_state_dict,
                 "loop_state": { # all loop state (other than step) so that we can resume training
-                    "min_val_bpb": min_val_bpb,
                     "smooth_train_loss": smooth_train_loss,
                     "total_training_time": total_training_time,
                 },
