@@ -6,6 +6,7 @@ from picogpt.dataloader import tokenizing_distributed_data_loader_with_state, to
 from picogpt.engine import Engine
 from picogpt.gpt import GPTConfig, GPT
 from picogpt.tokenizer import get_tokenizer, get_token_bytes
+from scripts.base_eval import evaluate_model
 
 os.environ["PYTORCH_ALLOC_CONF"] = "expandable_segments:True"
 import time
@@ -191,11 +192,21 @@ while True:
     last_step = step == num_iterations  # loop runs num_iterations+1 times so that we can eval/save at the end
     flops_so_far = num_flops_per_token * total_batch_size * step
 
-    # once in a while: evaluate the val bpb (all ranks participate)
-    # if last_step or step % eval_every == 0:
-
     # once in a while: estimate the CORE metric (all ranks participate)
     # use the original uncompiled model because the inputs keep changing shape
+    results = {}
+    if core_metric_every > 0 and (last_step or (step > 0 & step % core_metric_every == 0)):
+        model.eval()
+        with autocast_ctx:
+            results = evaluate_model(orig_model, tokenizer, device, max_per_task=core_metric_max_per_task)
+        print0(f"Step {step:05d} | CORE metric: {results['core_metric']:.4f}")
+        wandb_run.log({
+            "step": step,
+            "total_training_flops": flops_so_far,
+            "core_metric": results["core_metric"],
+            "centered_results": results["centered_results"],
+        })
+        model.train()
 
     # once in a while: sample from the model (only on master process)
     # use the original uncompiled model because the inputs keep changing shape
