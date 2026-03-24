@@ -14,6 +14,7 @@ import os
 from picogpt.common import autodetect_device_type, compute_init, DummyWandb, get_base_dir, print0
 from picogpt.engine import Engine
 from picogpt.checkpoint_manager import load_model
+from scripts.chat_eval import run_chat_eval
 
 os.environ["PYTORCH_ALLOC_CONF"] = "expandable_segments:True"
 
